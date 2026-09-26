@@ -65,7 +65,7 @@ function createTrpcChangeBus() {
      * @param key The changed row ID, when a single-row fetch is sufficient.
      *   Omit it when a full authorized snapshot is needed.
      */
-    publish(channel, key) {
+    publish: (channel, key) => {
       emitter.emit("change", { channel, key });
     },
     /**
@@ -74,7 +74,7 @@ function createTrpcChangeBus() {
      * @param signal Aborts the iterator when the tRPC subscription closes.
      * @returns An async iterable of channel and optional row-key signals.
      */
-    changes(signal) {
+    changes: (signal) => {
       const events = on2(emitter, "change", { signal });
       return {
         async *[Symbol.asyncIterator]() {

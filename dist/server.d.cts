@@ -57,14 +57,14 @@ declare function createTrpcChangeBus(): {
      * @param key The changed row ID, when a single-row fetch is sufficient.
      *   Omit it when a full authorized snapshot is needed.
      */
-    publish(channel: string, key?: string): void;
+    publish: (channel: string, key?: string) => void;
     /**
      * Iterate over changes published in this process after subscription.
      *
      * @param signal Aborts the iterator when the tRPC subscription closes.
      * @returns An async iterable of channel and optional row-key signals.
      */
-    changes(signal?: AbortSignal): AsyncIterable<TrpcChange>;
+    changes: (signal?: AbortSignal) => AsyncIterable<TrpcChange>;
 };
 
 export { TrpcSync, type TrpcSyncEvent, createTrpcChangeBus };
