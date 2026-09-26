@@ -95,9 +95,22 @@ function createTrpcChangeBus() {
   const emitter = new import_node_events.EventEmitter();
   emitter.setMaxListeners(0);
   return {
+    /**
+     * Announce a committed change without sending row data to subscribers.
+     *
+     * @param channel The logical collection or refetch channel that changed.
+     * @param key The changed row ID, when a single-row fetch is sufficient.
+     *   Omit it when a full authorized snapshot is needed.
+     */
     publish(channel, key) {
       emitter.emit("change", { channel, key });
     },
+    /**
+     * Iterate over changes published in this process after subscription.
+     *
+     * @param signal Aborts the iterator when the tRPC subscription closes.
+     * @returns An async iterable of channel and optional row-key signals.
+     */
     changes(signal) {
       const events = (0, import_node_events.on)(emitter, "change", { signal });
       return {
