@@ -33,6 +33,9 @@
   },
   "packageManager": "pnpm@10.13.1",
   "devDependencies": {
+    "@tanstack/react-db": "0.4.1",
+    "@tanstack/store": "0.11.1",
+    "@trpc/server": "11.18.0",
     "@types/node": "^24.5.0",
     "tsup": "^8.5.0",
     "typescript": "^5.9.2",
@@ -40,8 +43,8 @@
     "zod": "^4.1.12"
   },
   "peerDependencies": {
-    "@tanstack/react-db": "^0.1.24",
-    "@tanstack/store": "^0.7.5",
+    "@tanstack/react-db": "^0.4.1",
+    "@tanstack/store": "^0.11.0",
     "@trpc/server": "^11.4.3"
   }
 }

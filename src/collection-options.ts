@@ -105,7 +105,7 @@ export function trpcCollectionOptions<TItem extends TrpcItem>(
   const serializer = config.serializer ?? jsonSerializer;
   const localStorageSyncEnabled = config.localStorage ?? true;
 
-  const receivedEventIds = new Store<Set<number>>(new Set());
+  const receivedEventIds = new Store<Set<number>>(new Set<number>());
 
   const sync: SyncConfig<TItem>["sync"] = (params) => {
     const { begin, write, commit, markReady } = params;
@@ -273,7 +273,7 @@ export function trpcCollectionOptions<TItem extends TrpcItem>(
     return new Promise((resolve) => {
       const unsubscribe = receivedEventIds.subscribe(() => {
         if (receivedEventIds.state.has(eventId)) {
-          unsubscribe();
+          unsubscribe.unsubscribe();
           resolve(true);
           logger.debug("Received event id", eventId);
         }

@@ -1,5 +1,37 @@
 # tRPC Tanstack DB Collection
 
+## Scoped collections and shared subscriptions
+
+`scopedTrpcCollectionOptions` lets an application keep its existing tRPC
+procedures and share one subscription across collections. A change signal may
+contain a row key; the adapter then calls an authorized `getOne` query and
+updates or deletes only that row. Signals without a key reload the authorized
+list, including after reconnect. Subscribe before the first list fetch so
+changes during loading are applied afterward.
+
+```ts
+const collection = createCollection({
+  ...scopedTrpcCollectionOptions({
+    id: `notes:${mapId}`,
+    getKey: (note) => note.id,
+    list: () => trpc.note.listForMap.query({ mapId }),
+    getOne: (id) => trpc.note.getForMap.query({ mapId, id }),
+    listen: (onChange) => sharedStream.subscribe(mapId, "notes", onChange),
+  }),
+  onUpdate: async ({ transaction }) => {
+    for (const { original, changes } of transaction.mutations) {
+      await trpc.note.update.mutate({ id: original.id, data: changes });
+    }
+  },
+});
+```
+
+`createTrpcChangeBus` is available from `trpc-db-collection/server` for a
+process-local signal source. Publish a key after a successful row mutation;
+publish without a key when multiple rows or access rules may have changed.
+The subscription route must check access before forwarding signals. Deployments
+with multiple server processes need a shared signal source.
+
 [![npm version](https://img.shields.io/npm/v/trpc-db-collection.svg)](https://www.npmjs.com/package/trpc-db-collection)
 [![license](https://img.shields.io/npm/l/trpc-db-collection.svg)](https://github.com/fuegoio/trpc-db-collection/blob/main/LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/fuegoio/trpc-db-collection.svg?style=social)](https://github.com/fuegoio/trpc-db-collection/stargazers)
